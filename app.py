@@ -125,8 +125,14 @@ st.markdown("""
     .footer {
         text-align: center;
         margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1px solid #dce5dc;
         font-size: 0.8rem;
         color: #6c7a6a;
+    }
+    .creator {
+        font-weight: 500;
+        color: #2c5a2e;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -153,7 +159,6 @@ st.markdown('</div>', unsafe_allow_html=True)
 analyze = st.button("🔍 Analyze Disease", use_container_width=True)
 
 # ------------------- PREDICTION LOGIC -------------------
-# Dummy classes (same as your original)
 classes = ['Bacterial leaf blight', 'Brown spot', 'Leaf smut']
 
 def predict_disease(image):
@@ -161,26 +166,22 @@ def predict_disease(image):
     Replace this function with your actual model inference.
     Currently returns random probabilities for demo.
     """
-    # Simulate inference time (smooth UX)
-    time.sleep(0.5)
+    time.sleep(0.5)  # simulate inference delay
     preds = np.random.rand(3)
     preds = preds / preds.sum()
     return {classes[i]: float(preds[i]) for i in range(3)}
 
 # ------------------- DISPLAY RESULTS -------------------
 if analyze and uploaded_file is not None:
-    # Load image
     image = Image.open(uploaded_file).convert("RGB")
     st.image(image, caption="📷 Uploaded Rice Leaf", use_container_width=True)
     
     with st.spinner("🧠 Analyzing with MobileNetV2 ..."):
         predictions = predict_disease(image)
     
-    # Sort by confidence
     sorted_preds = sorted(predictions.items(), key=lambda x: x[1], reverse=True)
     top_disease, top_conf = sorted_preds[0]
     
-    # Show result card
     st.markdown(f"""
     <div class="pred-card">
         <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -189,7 +190,6 @@ if analyze and uploaded_file is not None:
         </div>
     """, unsafe_allow_html=True)
     
-    # Confidence bars for all diseases
     for disease, conf in sorted_preds:
         st.markdown(f"""
         <div style="margin-top: 12px;">
@@ -205,7 +205,6 @@ if analyze and uploaded_file is not None:
     
     st.markdown('</div>', unsafe_allow_html=True)
     
-    # Optional recommendation (like second image)
     if top_conf > 0.7:
         st.success("✅ High confidence – recommended action: Apply targeted treatment.")
     elif top_conf > 0.45:
@@ -216,5 +215,10 @@ if analyze and uploaded_file is not None:
 elif analyze and uploaded_file is None:
     st.error("📛 Please upload a rice leaf image first.")
 
-# ------------------- FOOTER -------------------
-st.markdown('<div class="footer">🚀 Powered by MobileNetV2 · Trained on 10k+ rice leaf images · Continuous improvement</div>', unsafe_allow_html=True)
+# ------------------- FOOTER WITH CREATOR CREDIT -------------------
+st.markdown(f"""
+<div class="footer">
+    🚀 Powered by MobileNetV2 · Trained on 10k+ rice leaf images<br>
+    <span class="creator">✨ Project created by Kalyana Sundar - AI Engineer ✨</span>
+</div>
+""", unsafe_allow_html=True)
